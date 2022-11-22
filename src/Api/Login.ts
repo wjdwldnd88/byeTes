@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import {IAuthData, writeAuthInfo} from '../RealmDB/Schema';
 
-const loginUri = 'https://auth.tesla.com/oauth2/v3/token';
-export const redirectUri = 'https://auth.tesla.com/void/callback';
+const loginUrl = 'https://auth.tesla.com/oauth2/v3/token';
+export const redirectUrl = 'https://auth.tesla.com/void/callback';
 
 const requestAuth = async (body: any): Promise<boolean> => {
   try {
-    const httpResponse = await fetch(loginUri, {
+    const httpResponse = await fetch(loginUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export const makeAuthInfo = async (
     client_id: 'ownerapi',
     code,
     code_verifier,
-    redirect_uri: redirectUri,
+    redirect_uri: redirectUrl,
   };
 
   try {
