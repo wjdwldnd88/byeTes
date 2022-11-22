@@ -1,70 +1,39 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  TextInput,
+  TouchableOpacity,
   Image,
 } from 'react-native';
-import 'react-native-url-polyfill/auto';
-import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
-import {readAuthInfo} from '../../RealmDB/Schema';
-import {IVehicle, requestState} from '../../Api/State';
 
-type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
-
+const carName = 'carName';
+const carStatus = 'carStatus';
 const beteryStatus = 'beteryStatus';
 
-const HomeScreen = (props: IProps): JSX.Element => {
-  const [accessToken, setAccessToken] = useState<string>('');
-  const [vehicleData, setVehicleData] = useState<IVehicle>();
+const onPress = () => {};
 
-  const onPress_1 = async () => {};
-
-  const onPress = async () => {
-    const state = await requestState(accessToken);
-  };
-  useEffect(() => {
-    readAuthInfo().then(authData => {
-      setAccessToken(authData?.access_token || '');
-    });
-  }, []);
-  useEffect(() => {
-    requestState(accessToken).then(vehicle_Data => {
-      if (vehicle_Data) {
-        setVehicleData(vehicle_Data);
-      }
-    });
-  }, [accessToken]);
-
+const Main = (): JSX.Element => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
       <View style={{padding: 10, flex: 0.5}}>
-        <Text style={styles.carName}>{vehicleData?.display_name}</Text>
+        <Text style={styles.carName}>{carName}</Text>
 
         <Text style={styles.beteryStatus}>{beteryStatus}</Text>
 
-        <Text style={styles.carStatus}>{vehicleData?.state}</Text>
+        <Text style={styles.carStatus}>{carStatus}</Text>
 
         <View>
           <Image
-            source={require('../../../assets/image/myTesla.jpg')}
+            source={require('../byeTes/assets/image/myTesla.jpg')}
             style={styles.image}
           />
         </View>
 
         <View style={styles.card}>
-          <TouchableOpacity style={styles.button}>
-            <Text>{vehicleData?.id}</Text>
-          </TouchableOpacity>
-
-          <Text>Access code : </Text>
-
-          <Text>{accessToken}</Text>
-
-          <TouchableOpacity style={styles.button1} onPress={onPress}>
+          <TouchableOpacity style={styles.button} onPress={onPress}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
@@ -144,17 +113,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     padding: 10,
   },
-  button1: {
-    elevation: 8,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
   image: {
     width: '100%',
     height: 230,
   },
 });
 
-export default HomeScreen;
+export default Main;
