@@ -11,7 +11,12 @@ import {
 import 'react-native-url-polyfill/auto';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
 import {readAuthInfo} from '../../RealmDB/Schema';
-import {IVehicle, requestState} from '../../Api/State';
+import {
+  IVehicle,
+  requestState,
+  requestState_Vehicle_data,
+  IVehicleAll,
+} from '../../Api/State';
 
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
@@ -20,11 +25,12 @@ const beteryStatus = 'beteryStatus';
 const HomeScreen = (props: IProps): JSX.Element => {
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
+  const [vehicleData_all, setVehicleData_all] = useState<IVehicleAll>();
 
   const onPress_1 = async () => {};
 
   const onPress = async () => {
-    const state = await requestState(accessToken);
+    const state = await requestState_Vehicle_data(accessToken, _ID as number);
   };
   useEffect(() => {
     readAuthInfo().then(authData => {
@@ -38,13 +44,23 @@ const HomeScreen = (props: IProps): JSX.Element => {
       }
     });
   }, [accessToken]);
+  const _ID = vehicleData?.id;
+  useEffect(() => {
+    requestState_Vehicle_data(accessToken, _ID as number).then(
+      vehicle_Data_all => {
+        if (vehicle_Data_all) {
+          setVehicleData_all(vehicle_Data_all);
+        }
+      },
+    );
+  }, [accessToken, _ID]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
       <View style={{padding: 10, flex: 0.5}}>
         <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
-        <Text style={styles.beteryStatus}>{beteryStatus}</Text>
+        <Text style={styles.beteryStatus}>{vehicleData_all?.color}</Text>
 
         <Text style={styles.carStatus}>{vehicleData?.state}</Text>
 
