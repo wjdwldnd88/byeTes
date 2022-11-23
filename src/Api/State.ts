@@ -90,12 +90,12 @@ export interface IVehicleAll {
   api_version: number;
   backseat_token?: string;
   backseat_token_updated_at?: string;
-  charge_state: object;
-  climate_state: Array<climate_state>;
-  drive_state: Array<drive_state>;
-  gui_settings: Array<gui_settings>;
-  vehicle_config: Array<vehicle_config>;
-  vehicle_state: Array<vehicle_state>;
+  charge_state: Charge_state;
+  climate_state: Climate_state;
+  drive_state: Drive_state;
+  gui_settings: Gui_settings;
+  vehicle_config: Vehicle_config;
+  vehicle_state: Vehicle_state;
 }
 
 export interface Charge_state {
@@ -143,7 +143,7 @@ export interface Charge_state {
   user_charge_enable_request?: string;
 }
 
-export interface climate_state {
+export interface Climate_state {
   battery_heater: boolean;
   battery_heater_no_power: boolean;
   climate_keeper_mode: string;
@@ -175,7 +175,7 @@ export interface climate_state {
   wiper_blade_heater: boolean;
 }
 
-export interface drive_state {
+export interface Drive_state {
   gps_as_of: number;
   heading: number;
   latitude: Float;
@@ -190,7 +190,7 @@ export interface drive_state {
   timestamp: number;
 }
 
-export interface vehicle_config {
+export interface Vehicle_config {
   can_accept_navigation_requests: boolean;
   can_actuate_trunks: boolean;
   car_special_type: string; //"base",
@@ -215,7 +215,7 @@ export interface vehicle_config {
   trim_badging: string; //"90d",
   wheel_type: string; //"AeroTurbine20"
 }
-export interface gui_settings {
+export interface Gui_settings {
   gui_24_hour_time: boolean;
   gui_charge_rate_units: string; //"mi/hr",
   gui_distance_units: string; //"mi/hr",
@@ -224,7 +224,7 @@ export interface gui_settings {
   timestamp: number;
 }
 
-export interface vehicle_state {
+export interface Vehicle_state {
   api_version: number;
   autopark_state_v2: string; //"ready",
   autopark_style: string; //"dead_man",

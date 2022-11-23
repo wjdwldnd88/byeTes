@@ -60,7 +60,9 @@ const HomeScreen = (props: IProps): JSX.Element => {
       <View style={{padding: 10, flex: 0.5}}>
         <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
-        <Text style={styles.beteryStatus}>{vehicleData_all?.color}</Text>
+        <Text style={styles.beteryStatus}>
+          {vehicleData_all?.charge_state.battery_level}
+        </Text>
 
         <Text style={styles.carStatus}>{vehicleData?.state}</Text>
 
