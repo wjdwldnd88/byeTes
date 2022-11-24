@@ -1,11 +1,7 @@
-import {Float} from 'react-native/Libraries/Types/CodegenTypes';
 import {authSchema} from '../RealmDB/Schema';
 import {entryUrl} from './Common';
 
 const stateUrl = entryUrl + '/api/1/vehicles';
-const authData = new Realm({schema: [authSchema]});
-console.log('authData : ', authData);
-//const authKey = authData.objects('access_token');
 
 /*
 {
@@ -90,32 +86,32 @@ export interface IVehicleAll {
   api_version: number;
   backseat_token?: string;
   backseat_token_updated_at?: string;
-  charge_state: Charge_state;
-  climate_state: Climate_state;
-  drive_state: Drive_state;
-  gui_settings: Gui_settings;
-  vehicle_config: Vehicle_config;
-  vehicle_state: Vehicle_state;
+  charge_state: charge_state;
+  climate_state: climate_state;
+  drive_state: drive_state;
+  gui_settings: gui_settings;
+  vehicle_config: vehicle_config;
+  vehicle_state: vehicle_state;
 }
 
-export interface Charge_state {
+export interface charge_state {
   battery_heater_on: boolean;
   battery_level: number;
-  battery_range: Float;
+  battery_range: number;
   charge_current_request: number;
   charge_current_request_max: number;
   charge_enable_request: boolean;
-  charge_energy_added: Float;
+  charge_energy_added: number;
   charge_limit_soc: number;
   charge_limit_soc_max: number;
   charge_limit_soc_min: number;
   charge_limit_soc_std: number;
-  charge_miles_added_ideal: Float;
-  charge_miles_added_rated: Float;
+  charge_miles_added_ideal: number;
+  charge_miles_added_rated: number;
   charge_port_cold_weather_mode?: string;
   charge_port_door_open: boolean;
   charge_port_latch: string;
-  charge_rate: Float;
+  charge_rate: number;
   charge_to_max_range: boolean;
   charger_actual_current: number;
   charger_phases?: string;
@@ -124,11 +120,11 @@ export interface Charge_state {
   charger_voltage: number;
   charging_state: string;
   conn_charge_cable: string;
-  est_battery_range: Float;
+  est_battery_range: number;
   fast_charger_brand: string;
   fast_charger_present: boolean;
   fast_charger_type: string;
-  ideal_battery_range: Float;
+  ideal_battery_range: number;
   managed_charging_active: boolean;
   managed_charging_start_time?: string;
   managed_charging_user_canceled: boolean;
@@ -136,30 +132,30 @@ export interface Charge_state {
   not_enough_power_to_heat: boolean;
   scheduled_charging_pending: boolean;
   scheduled_charging_start_time?: string;
-  time_to_full_charge: Float;
+  time_to_full_charge: number;
   timestamp: number;
   trip_charging: boolean;
   usable_battery_level: number;
   user_charge_enable_request?: string;
 }
 
-export interface Climate_state {
+export interface climate_state {
   battery_heater: boolean;
   battery_heater_no_power: boolean;
   climate_keeper_mode: string;
-  driver_temp_setting: Float;
+  driver_temp_setting: number;
   fan_status: number;
-  inside_temp: Float;
+  inside_temp: number;
   is_auto_conditioning_on: boolean;
   is_climate_on: boolean;
   is_front_defroster_on: boolean;
   is_preconditioning: boolean;
   is_rear_defroster_on: boolean;
   left_temp_direction: number;
-  max_avail_temp: Float;
-  min_avail_temp: Float;
-  outside_temp: Float;
-  passenger_temp_setting: Float;
+  max_avail_temp: number;
+  min_avail_temp: number;
+  outside_temp: number;
+  passenger_temp_setting: number;
   remote_heater_control_enabled: boolean;
   right_temp_direction: number;
   seat_heater_left: number;
@@ -175,14 +171,14 @@ export interface Climate_state {
   wiper_blade_heater: boolean;
 }
 
-export interface Drive_state {
+export interface drive_state {
   gps_as_of: number;
   heading: number;
-  latitude: Float;
-  longitude: Float;
-  native_latitude: Float;
+  latitude: number;
+  longitude: number;
+  native_latitude: number;
   native_location_supported: number;
-  native_longitude: Float;
+  native_longitude: number;
   native_type: string;
   power?: string;
   shift_state?: string;
@@ -190,7 +186,7 @@ export interface Drive_state {
   timestamp: number;
 }
 
-export interface Vehicle_config {
+export interface vehicle_config {
   can_accept_navigation_requests: boolean;
   can_actuate_trunks: boolean;
   car_special_type: string; //"base",
@@ -215,7 +211,7 @@ export interface Vehicle_config {
   trim_badging: string; //"90d",
   wheel_type: string; //"AeroTurbine20"
 }
-export interface Gui_settings {
+export interface gui_settings {
   gui_24_hour_time: boolean;
   gui_charge_rate_units: string; //"mi/hr",
   gui_distance_units: string; //"mi/hr",
@@ -224,7 +220,7 @@ export interface Gui_settings {
   timestamp: number;
 }
 
-export interface Vehicle_state {
+export interface vehicle_state {
   api_version: number;
   autopark_state_v2: string; //"ready",
   autopark_style: string; //"dead_man",
@@ -240,7 +236,7 @@ export interface Vehicle_state {
   locked: boolean;
   media_state: Array<any>;
   notifications_supported: boolean;
-  odometer: Float;
+  odometer: number;
   parsed_calendar_supported: boolean;
   pf: number;
   pr: number;
@@ -262,16 +258,13 @@ export interface media_state {}
 
 type IVehiclesAll = Array<IVehicleAll>;
 
-export const requestState_Vehicle_data = async (
+export const requsetVehicleState = async (
   accessToken: string,
-  _ID: number,
+  Id: number,
 ): Promise<IVehicleAll | null> => {
   try {
     const body_bearer = 'Bearer ' + accessToken;
-    const vehicle_data_URL =
-      'https://owner-api.teslamotors.com/api/1/vehicles/' +
-      _ID +
-      '/vehicle_data';
+    const vehicle_data_URL = entryUrl + Id + '/vehicle_data';
     console.log('body_bearer : ', body_bearer);
     console.log('vehicle_data_URL : ', vehicle_data_URL);
 
@@ -294,7 +287,7 @@ export const requestState_Vehicle_data = async (
     console.log('vehicle_status_all : ', vehicle_status_all);
     return vehicle_status_all[0];
   } catch (e) {
-    console.log('requestState_Vehicle_data error');
+    console.log('requsetVehicleState error');
     console.log('e : ', e);
     throw e;
   }

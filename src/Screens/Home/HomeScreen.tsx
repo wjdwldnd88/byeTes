@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,7 +14,7 @@ import {readAuthInfo} from '../../RealmDB/Schema';
 import {
   IVehicle,
   requestState,
-  requestState_Vehicle_data,
+  requsetVehicleState,
   IVehicleAll,
 } from '../../Api/State';
 
@@ -25,12 +25,15 @@ const beteryStatus = 'beteryStatus';
 const HomeScreen = (props: IProps): JSX.Element => {
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
-  const [vehicleData_all, setVehicleData_all] = useState<IVehicleAll>();
+  const [vehicleDataAll, setvehicleDataAll] = useState<IVehicleAll>();
+  const Id = useRef<number>(vehicleData?.id as number);
 
   const onPress_1 = async () => {};
 
   const onPress = async () => {
-    const state = await requestState_Vehicle_data(accessToken, _ID as number);
+    if (!Id) {
+      const state = await requsetVehicleState(accessToken, Id);
+    }
   };
   useEffect(() => {
     readAuthInfo().then(authData => {
@@ -44,16 +47,14 @@ const HomeScreen = (props: IProps): JSX.Element => {
       }
     });
   }, [accessToken]);
-  const _ID = vehicleData?.id;
+
   useEffect(() => {
-    requestState_Vehicle_data(accessToken, _ID as number).then(
-      vehicle_Data_all => {
-        if (vehicle_Data_all) {
-          setVehicleData_all(vehicle_Data_all);
-        }
-      },
-    );
-  }, [accessToken, _ID]);
+    requsetVehicleState(accessToken, Id.current).then(vehicle_Data_all => {
+      if (vehicle_Data_all) {
+        setvehicleDataAll(vehicle_Data_all);
+      }
+    });
+  }, [accessToken, Id]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
@@ -61,7 +62,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
         <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
         <Text style={styles.beteryStatus}>
-          {vehicleData_all?.charge_state.battery_level}
+          {vehicleDataAll?.charge_state.battery_level}
         </Text>
 
         <Text style={styles.carStatus}>{vehicleData?.state}</Text>
