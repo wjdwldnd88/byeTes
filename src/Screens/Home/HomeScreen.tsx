@@ -1,29 +1,29 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
 import 'react-native-url-polyfill/auto';
-import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
-import {readAuthInfo} from '../../RealmDB/Schema';
 import {
   IVehicle,
+  IVehicleAll,
   requestState,
   requsetVehicleState,
-  IVehicleAll,
 } from '../../Api/State';
+import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
+import {readAuthInfo} from '../../RealmDB/Schema';
 
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
 const HomeScreen = (props: IProps): JSX.Element => {
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
-  const [vehicleDataAll, setvehicleDataAll] = useState<IVehicleAll>();
+  const [vehicleDataAll, setVehicleDataAll] = useState<IVehicleAll>();
 
   const id = useRef<number>();
 
@@ -55,33 +55,24 @@ const HomeScreen = (props: IProps): JSX.Element => {
   };
 
   useEffect(() => {
-    readAuthInfo().then(authData => {
-      setAccessToken(authData?.access_token || '');
+    readAuthInfo().then(async authData => {
+      try {
+        const accessToken = authData!.access_token;
+
+        setAccessToken(accessToken);
+
+        const state = await requestState(accessToken);
+
+        setVehicleData(state);
+
+        const allStates = await requsetVehicleState(accessToken, state!.id);
+
+        setVehicleDataAll(allStates);
+      } catch (e) {
+        console.log('network error:', e);
+      }
     });
   }, []);
-  useEffect(() => {
-    requestState(accessToken).then(vehicle_Data => {
-      if (vehicle_Data) {
-        setVehicleData(vehicle_Data);
-        id.current = vehicleData?.id as number;
-      }
-    });
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (!id.current) {
-      return;
-    }
-
-    requsetVehicleState(accessToken, id.current).then(vehicle_data_all => {
-      if (!vehicle_data_all) {
-        return;
-      }
-
-      setvehicleDataAll(vehicle_data_all);
-      console.log('111vehicle_Data_all : ', vehicle_data_all);
-    });
-  }, [accessToken, id.current]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -110,7 +101,9 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
           <Text>{accessToken}</Text>
 
-          <TouchableOpacity style={styles.button1} onPress={handleControlButton}>
+          <TouchableOpacity
+            style={styles.button1}
+            onPress={handleControlButton}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
