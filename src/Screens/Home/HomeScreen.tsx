@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,7 +11,12 @@ import {
 import 'react-native-url-polyfill/auto';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
 import {readAuthInfo} from '../../RealmDB/Schema';
-import {IVehicle, requestState} from '../../Api/State';
+import {
+  IVehicle,
+  requestState,
+  requsetVehicleState,
+  IVehicleAll,
+} from '../../Api/State';
 
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
@@ -20,11 +25,31 @@ const beteryStatus = 'beteryStatus';
 const HomeScreen = (props: IProps): JSX.Element => {
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
-
-  const onPress_1 = async () => {};
+  const [vehicleDataAll, setvehicleDataAll] = useState<IVehicleAll>();
+  const Id = useRef<number>(vehicleData?.id as number);
+  // 괄호를 빈거로 놔두면 Id 넣는 부분에서 전부 에러 생김
+  const onPress_1 = async () => {
+    await requestState(accessToken);
+    console.log('onPress_1  requestState  : ', vehicleData?.id);
+  };
 
   const onPress = async () => {
-    const state = await requestState(accessToken);
+    // 이거 requsetVehicleState 도 호출을 못하는거 같음
+    await requsetVehicleState(accessToken, Id.current);
+    console.log('accessToken : ', accessToken);
+    console.log('Id : ', Id);
+    console.log(
+      'vehicleDataAll?.charge_state : ',
+      vehicleDataAll?.charge_state,
+    );
+    console.log(
+      'vehicleDataAll?.charge_state.battery_level : ',
+      vehicleDataAll?.charge_state.battery_level,
+    );
+    console.log(
+      'vehicleDataAll?.display_name) : ',
+      vehicleDataAll?.display_name,
+    );
   };
   useEffect(() => {
     readAuthInfo().then(authData => {
@@ -35,16 +60,29 @@ const HomeScreen = (props: IProps): JSX.Element => {
     requestState(accessToken).then(vehicle_Data => {
       if (vehicle_Data) {
         setVehicleData(vehicle_Data);
+        Id.current = vehicleData?.id as number;
       }
     });
   }, [accessToken]);
+
+  useEffect(() => {
+    requsetVehicleState(accessToken, Id.current).then(vehicle_data_all => {
+      if (vehicle_data_all) {
+        setvehicleDataAll(vehicle_data_all);
+        console.log('111vehicle_Data_all : ', vehicle_data_all);
+      }
+      console.log('222vehicle_Data_all : ', vehicle_data_all);
+    });
+  }, [accessToken, Id]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
       <View style={{padding: 10, flex: 0.5}}>
         <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
-        <Text style={styles.beteryStatus}>{beteryStatus}</Text>
+        <Text style={styles.beteryStatus}>
+          베터리 잔여랑 : {vehicleDataAll?.charge_state.battery_level}%
+        </Text>
 
         <Text style={styles.carStatus}>{vehicleData?.state}</Text>
 
@@ -56,7 +94,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
         </View>
 
         <View style={styles.card}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={onPress}>
             <Text>{vehicleData?.id}</Text>
           </TouchableOpacity>
 
@@ -64,7 +102,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
           <Text>{accessToken}</Text>
 
-          <TouchableOpacity style={styles.button1} onPress={onPress}>
+          <TouchableOpacity style={styles.button1} onPress={onPress_1}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
