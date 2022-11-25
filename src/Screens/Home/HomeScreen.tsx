@@ -28,7 +28,10 @@ const HomeScreen = (props: IProps): JSX.Element => {
   const [vehicleDataAll, setvehicleDataAll] = useState<IVehicleAll>();
   const Id = useRef<number>(vehicleData?.id as number);
   // 괄호를 빈거로 놔두면 Id 넣는 부분에서 전부 에러 생김
-  const onPress_1 = async () => {};
+  const onPress_1 = async () => {
+    await requestState(accessToken);
+    console.log('onPress_1  requestState  : ', vehicleData?.id);
+  };
 
   const onPress = async () => {
     // 이거 requsetVehicleState 도 호출을 못하는거 같음
@@ -43,6 +46,10 @@ const HomeScreen = (props: IProps): JSX.Element => {
       'vehicleDataAll?.charge_state.battery_level : ',
       vehicleDataAll?.charge_state.battery_level,
     );
+    console.log(
+      'vehicleDataAll?.display_name) : ',
+      vehicleDataAll?.display_name,
+    );
   };
   useEffect(() => {
     readAuthInfo().then(authData => {
@@ -53,19 +60,18 @@ const HomeScreen = (props: IProps): JSX.Element => {
     requestState(accessToken).then(vehicle_Data => {
       if (vehicle_Data) {
         setVehicleData(vehicle_Data);
+        Id.current = vehicleData?.id as number;
       }
     });
   }, [accessToken]);
-
-  // const Id = vehicleData?.id as number;
 
   useEffect(() => {
     requsetVehicleState(accessToken, Id.current).then(vehicle_data_all => {
       if (vehicle_data_all) {
         setvehicleDataAll(vehicle_data_all);
-        console.log('vehicle_Data_all : ', vehicle_data_all);
+        console.log('111vehicle_Data_all : ', vehicle_data_all);
       }
-      console.log('vehicle_Data_all : ', vehicle_data_all);
+      console.log('222vehicle_Data_all : ', vehicle_data_all);
     });
   }, [accessToken, Id]);
 
@@ -75,7 +81,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
         <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
         <Text style={styles.beteryStatus}>
-          {vehicleDataAll?.charge_state.battery_level}
+          베터리 잔여랑 : {vehicleDataAll?.charge_state.battery_level}%
         </Text>
 
         <Text style={styles.carStatus}>{vehicleData?.state}</Text>
@@ -96,7 +102,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
           <Text>{accessToken}</Text>
 
-          <TouchableOpacity style={styles.button1} onPress={onPress}>
+          <TouchableOpacity style={styles.button1} onPress={onPress_1}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
