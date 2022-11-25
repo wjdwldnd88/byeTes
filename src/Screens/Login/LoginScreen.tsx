@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import 'react-native-url-polyfill/auto';
 import {refreshAuthInfo} from '../../Api/Login';
+import {requestUser} from '../../Api/User';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
 import {readAuthInfo} from '../../RealmDB/Schema';
 
@@ -31,7 +32,15 @@ const LoginScreen = (props: IProps): JSX.Element => {
           return;
         }
 
-        const {date, expires_in, refresh_token} = authData;
+        const {date, expires_in, refresh_token, access_token} = authData;
+        // 모종의 이유로 access token 이 유효하지 않으면 처음부터 로그인
+
+        const userData = await requestUser(access_token);
+
+        if (!userData) {
+          navigation.navigate(RouteNames.TeslaWebViewScreen);
+          return;
+        }
 
         // 만료된 경우 refresh token 을 사용
         const expireDate = dayjs(date).add(expires_in, 'seconds');
