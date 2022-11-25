@@ -3,7 +3,7 @@ import React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import 'react-native-url-polyfill/auto';
 import WebView, {WebViewMessageEvent} from 'react-native-webview';
-import {makeAuthInfo, redirectUri} from '../../Api/Login';
+import {makeAuthInfo, redirectUrl} from '../../Api/Login';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
 import {encryptSHA256, makeRandomString} from '../../Utils';
 
@@ -46,7 +46,7 @@ const TeslaWebViewScreen = (props: IProps): JSX.Element => {
     <SafeAreaView style={styles.container}>
       <WebView
         source={{
-          uri: `${authUri}?client_id=ownerapi&code_challenge=${hashedCode}&code_challenge_method=S256&redirect_uri=${redirectUri}&response_type=code&scope=openid+email+offline_access&state=NGU3OGVkMjY5Yzk0`,
+          uri: `${authUri}?client_id=ownerapi&code_challenge=${hashedCode}&code_challenge_method=S256&redirect_uri=${redirectUrl}&response_type=code&scope=openid+email+offline_access&state=NGU3OGVkMjY5Yzk0`,
         }}
         injectedJavaScript={runFirst}
         onMessage={handleMessage}
