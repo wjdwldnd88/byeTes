@@ -27,13 +27,22 @@ const HomeScreen = (props: IProps): JSX.Element => {
   const [vehicleData, setVehicleData] = useState<IVehicle>();
   const [vehicleDataAll, setvehicleDataAll] = useState<IVehicleAll>();
   const Id = useRef<number>(vehicleData?.id as number);
-
+  // 괄호를 빈거로 놔두면 Id 넣는 부분에서 전부 에러 생김
   const onPress_1 = async () => {};
 
   const onPress = async () => {
-    if (!Id) {
-      const state = await requsetVehicleState(accessToken, Id);
-    }
+    // 이거 requsetVehicleState 도 호출을 못하는거 같음
+    await requsetVehicleState(accessToken, Id.current);
+    console.log('accessToken : ', accessToken);
+    console.log('Id : ', Id);
+    console.log(
+      'vehicleDataAll?.charge_state : ',
+      vehicleDataAll?.charge_state,
+    );
+    console.log(
+      'vehicleDataAll?.charge_state.battery_level : ',
+      vehicleDataAll?.charge_state.battery_level,
+    );
   };
   useEffect(() => {
     readAuthInfo().then(authData => {
@@ -48,11 +57,15 @@ const HomeScreen = (props: IProps): JSX.Element => {
     });
   }, [accessToken]);
 
+  // const Id = vehicleData?.id as number;
+
   useEffect(() => {
-    requsetVehicleState(accessToken, Id.current).then(vehicle_Data_all => {
-      if (vehicle_Data_all) {
-        setvehicleDataAll(vehicle_Data_all);
+    requsetVehicleState(accessToken, Id.current).then(vehicle_data_all => {
+      if (vehicle_data_all) {
+        setvehicleDataAll(vehicle_data_all);
+        console.log('vehicle_Data_all : ', vehicle_data_all);
       }
+      console.log('vehicle_Data_all : ', vehicle_data_all);
     });
   }, [accessToken, Id]);
 
@@ -75,7 +88,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
         </View>
 
         <View style={styles.card}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={onPress}>
             <Text>{vehicleData?.id}</Text>
           </TouchableOpacity>
 

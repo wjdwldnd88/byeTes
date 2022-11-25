@@ -264,9 +264,10 @@ export const requsetVehicleState = async (
 ): Promise<IVehicleAll | null> => {
   try {
     const body_bearer = 'Bearer ' + accessToken;
-    const vehicle_data_URL = entryUrl + Id + '/vehicle_data';
-    console.log('body_bearer : ', body_bearer);
-    console.log('vehicle_data_URL : ', vehicle_data_URL);
+    const vehicle_data_URL =
+      entryUrl + '/api/1/vehicles/' + Id + '/vehicle_data';
+    // console.log('body_bearer : ', body_bearer);
+    // console.log('vehicle_data_URL : ', vehicle_data_URL);
 
     const httpResponse = await fetch(vehicle_data_URL, {
       method: 'GET',
@@ -275,16 +276,15 @@ export const requsetVehicleState = async (
       },
     });
 
-    console.log('httpResponse : ', httpResponse);
-
     if (!httpResponse.ok) {
       console.log('httpResponse not ok');
+      console.log('httpResponse : ', httpResponse);
       return null;
     }
     const result = await httpResponse.json();
-    console.log('result : ', result);
+    // console.log('result : ', result);
     const vehicle_status_all: IVehiclesAll = result.response;
-    console.log('vehicle_status_all : ', vehicle_status_all);
+    // console.log('vehicle_status_all : ', vehicle_status_all);
     return vehicle_status_all[0];
   } catch (e) {
     console.log('requsetVehicleState error');
