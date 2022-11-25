@@ -20,24 +20,26 @@ import {
 
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
-const beteryStatus = 'beteryStatus';
-
 const HomeScreen = (props: IProps): JSX.Element => {
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
   const [vehicleDataAll, setvehicleDataAll] = useState<IVehicleAll>();
-  const Id = useRef<number>(vehicleData?.id as number);
-  // 괄호를 빈거로 놔두면 Id 넣는 부분에서 전부 에러 생김
-  const onPress_1 = async () => {
+
+  const id = useRef<number>();
+
+  const handleControlButton = async () => {
     await requestState(accessToken);
-    console.log('onPress_1  requestState  : ', vehicleData?.id);
+    console.log('pressControl  requestState  : ', vehicleData?.id);
   };
 
-  const onPress = async () => {
-    // 이거 requsetVehicleState 도 호출을 못하는거 같음
-    await requsetVehicleState(accessToken, Id.current);
+  const pressButton = async () => {
+    if (!id.current) {
+      return;
+    }
+
+    await requsetVehicleState(accessToken, id.current);
     console.log('accessToken : ', accessToken);
-    console.log('Id : ', Id);
+    console.log('id : ', id.current);
     console.log(
       'vehicleDataAll?.charge_state : ',
       vehicleDataAll?.charge_state,
@@ -51,6 +53,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
       vehicleDataAll?.display_name,
     );
   };
+
   useEffect(() => {
     readAuthInfo().then(authData => {
       setAccessToken(authData?.access_token || '');
@@ -60,24 +63,29 @@ const HomeScreen = (props: IProps): JSX.Element => {
     requestState(accessToken).then(vehicle_Data => {
       if (vehicle_Data) {
         setVehicleData(vehicle_Data);
-        Id.current = vehicleData?.id as number;
+        id.current = vehicleData?.id as number;
       }
     });
   }, [accessToken]);
 
   useEffect(() => {
-    requsetVehicleState(accessToken, Id.current).then(vehicle_data_all => {
-      if (vehicle_data_all) {
-        setvehicleDataAll(vehicle_data_all);
-        console.log('111vehicle_Data_all : ', vehicle_data_all);
+    if (!id.current) {
+      return;
+    }
+
+    requsetVehicleState(accessToken, id.current).then(vehicle_data_all => {
+      if (!vehicle_data_all) {
+        return;
       }
-      console.log('222vehicle_Data_all : ', vehicle_data_all);
+
+      setvehicleDataAll(vehicle_data_all);
+      console.log('111vehicle_Data_all : ', vehicle_data_all);
     });
-  }, [accessToken, Id]);
+  }, [accessToken, id.current]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
-      <View style={{padding: 10, flex: 0.5}}>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
         <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
         <Text style={styles.beteryStatus}>
@@ -94,7 +102,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
         </View>
 
         <View style={styles.card}>
-          <TouchableOpacity style={styles.button} onPress={onPress}>
+          <TouchableOpacity style={styles.button} onPress={pressButton}>
             <Text>{vehicleData?.id}</Text>
           </TouchableOpacity>
 
@@ -102,19 +110,19 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
           <Text>{accessToken}</Text>
 
-          <TouchableOpacity style={styles.button1} onPress={onPress_1}>
+          <TouchableOpacity style={styles.button1} onPress={handleControlButton}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={onPress}>
+          <TouchableOpacity style={styles.button} onPress={pressButton}>
             <Text>내부온도</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={onPress}>
+          <TouchableOpacity style={styles.button} onPress={pressButton}>
             <Text>제로백</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={onPress}>
+          <TouchableOpacity style={styles.button} onPress={pressButton}>
             <Text>베터리통계</Text>
           </TouchableOpacity>
         </View>
@@ -124,10 +132,16 @@ const HomeScreen = (props: IProps): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: 'black',
   },
+
+  container: {
+    padding: 10,
+    flex: 0.5,
+  },
+
   carName: {
     color: '#CCCCCC',
     fontSize: 25,
@@ -136,8 +150,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     textAlign: 'left',
     padding: 0,
-    // backgroundColor: '#CC0000',
   },
+
   beteryStatus: {
     color: '#CCCCCC',
     fontSize: 15,
@@ -146,8 +160,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     textAlign: 'left',
     padding: 0,
-    // backgroundColor: '#CC0000',
   },
+
   carStatus: {
     color: '#CCCCCC',
     fontSize: 10,
@@ -156,16 +170,16 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     textAlign: 'left',
     padding: 0,
-    // backgroundColor: '#CC0000',
   },
+
   card: {
     backgroundColor: '#fff',
     flex: 1,
-    borderTopLeftRadius: 10, // to provide rounded corners
-    borderTopRightRadius: 10, // to provide rounded corners
+    borderTopRadius: 10, // to provide rounded corners
     marginLeft: 10,
     marginRight: 10,
   },
+
   input: {
     padding: 20,
     borderBottomColor: '#bbb',
@@ -173,15 +187,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginLeft: 20,
   },
+
   text1: {
     color: '#fff',
     fontSize: 20,
   },
+
   button: {
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10,
   },
+
   button1: {
     elevation: 8,
     backgroundColor: '#DDDDDD',
@@ -189,6 +206,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
   },
+
   image: {
     width: '100%',
     height: 230,
