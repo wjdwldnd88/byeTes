@@ -1,27 +1,6 @@
-import {authSchema} from '../RealmDB/Schema';
-import {entryUrl} from './Common';
+import { entryUrl } from './Common';
 
 const stateUrl = entryUrl + '/api/1/vehicles';
-
-/*
-{
-    "access_type": "OWNER",
-    "api_version": 48,
-    "backseat_token": null,
-    "backseat_token_updated_at": null,
-    "calendar_enabled": true,
-    "color": null,
-    "display_name": "뿡뿡이",
-    "id": 1492931717741044,
-    "id_s": "1492931717741044",
-    "in_service": false,
-    "option_codes": "AD15,AF00,APFB,APH4,AU3P,BC3B,BT37,CDM0,CH07,COKR,DRLH,DV4W,FC3P,FG31,FM3B,GLFR,HL31,HM30,ID3W,IL31,LTPB,MDL3,MR31,PPSW,PC30,REAP,RF3G,RS3H,S3PB,SA3P,SC04,STCP,SU3C,T3MA,TM00,TW00,UT3P,W38B,WR00,ZINV,MI01,PL30,SLR0,ST30,BG31,I36M,USSB,AUF1,RSF1,ILF1,FGF1,CPF1,P3WS",
-    "state": "asleep",
-    "tokens": [Array],
-    "vehicle_id": 606446325,
-    "vin": "5YJ3E1EB0LF695181"
-  }
-*/
 
 export interface IVehicle {
   access_type: string;
@@ -43,7 +22,7 @@ export interface IVehicle {
 
 type IVehicles = Array<IVehicle>;
 
-export const requestState = async (body: string): Promise<IVehicle | null> => {
+export const requestState = async (body: string): Promise<IVehicle | undefined> => {
   try {
     const body_bearer = 'Bearer ' + body;
 
@@ -56,7 +35,7 @@ export const requestState = async (body: string): Promise<IVehicle | null> => {
 
     if (!httpResponse.ok) {
       console.log('httpResponse not ok');
-      return null;
+      return;
     }
     const result = await httpResponse.json();
 
@@ -254,36 +233,39 @@ export interface vehicle_state {
   vehicle_name: string; //":name"
 }
 
-export interface media_state {}
+export interface media_state { }
 
 export const requsetVehicleState = async (
   accessToken: string,
-  Id: number,
-): Promise<IVehicleAll | null> => {
+  id: number,
+): Promise<IVehicleAll | undefined> => {
   console.log('***********requsetVehicleState************');
   try {
-    const body_bearer = 'Bearer ' + accessToken;
+    const auth = 'Bearer ' + accessToken;
+
     const vehicle_data_URL =
-      entryUrl + '/api/1/vehicles/' + Id + '/vehicle_data';
-    console.log('body_bearer : ', body_bearer);
-    // console.log('vehicle_data_URL : ', vehicle_data_URL);
+      entryUrl + '/api/1/vehicles/' + id + '/vehicle_data';
 
     const httpResponse = await fetch(vehicle_data_URL, {
       method: 'GET',
       headers: {
-        Authorization: body_bearer,
+        Authorization: auth,
       },
     });
 
     if (!httpResponse.ok) {
       console.log('httpResponse not ok');
       console.log('httpResponse : ', httpResponse);
-      return null;
+      return;
     }
     const result = await httpResponse.json();
+
     console.log('result : ', result);
+
     const vehicle_status_all: IVehicleAll = result.response;
+
     console.log('vehicle_status_all : ', vehicle_status_all);
+
     return vehicle_status_all;
   } catch (e) {
     console.log('requsetVehicleState error');

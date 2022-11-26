@@ -1,5 +1,4 @@
-import {readAuthInfo} from '../RealmDB/Schema';
-import {entryUrl} from './Common';
+import { entryUrl } from './Common';
 
 interface IUser {
   email: string;
@@ -7,16 +6,14 @@ interface IUser {
   profile_image_url: string;
 }
 
-export const requestState = async (): Promise<IUser | undefined> => {
+export const requestUser = async (access_token: string): Promise<IUser | undefined> => {
   const userUrl = entryUrl + '/api/1/vehicles';
 
   try {
-    const authInfo = await readAuthInfo();
-
     const httpResponse = await fetch(userUrl, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${authInfo?.access_token}`,
+        Authorization: `Bearer ${access_token}`,
       },
     });
 
