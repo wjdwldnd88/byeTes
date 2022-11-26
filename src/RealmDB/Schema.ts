@@ -1,4 +1,4 @@
-import Realm, {Results} from 'realm';
+import Realm, { Results } from 'realm';
 
 export interface IAuthData {
   access_token: string;
@@ -41,14 +41,14 @@ export const authInfoRealm = async (): Promise<Realm> => {
 
 export const writeAuthInfo = async (userInfo: IAuthData): Promise<void> => {
   try {
-  } catch (e) {
-    console.log('write');
-  }
-  const realm = await authInfoRealm();
+    const realm = await authInfoRealm();
 
-  realm.write(() => {
-    realm.create(AUTH_INFO, {_id: 0, ...userInfo}, Realm.UpdateMode.Modified);
-  });
+    realm.write(() => {
+      realm.create(AUTH_INFO, { _id: 0, ...userInfo }, Realm.UpdateMode.Modified);
+    });
+  } catch (e) {
+    console.log('writeAuthInfo error');
+  }
 };
 
 export const readAuthInfo = async (): Promise<IAuthData | undefined> => {
