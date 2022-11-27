@@ -1,23 +1,11 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useRef, useState} from 'react';
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import 'react-native-url-polyfill/auto';
-import {
-  IVehicle,
-  IVehicleAll,
-  requestState,
-  requsetVehicleState,
-} from '../../Api/State';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
-import {readAuthInfo} from '../../RealmDB/Schema';
-import HomeScreen from '../Home/HomeScreen';
+export interface IControlScreenProps {
+  id: number;
+}
 
 type IProps = NativeStackScreenProps<
   RootStackParamList,
@@ -25,9 +13,9 @@ type IProps = NativeStackScreenProps<
 >;
 
 const ControlScreen = (props: IProps): JSX.Element => {
-  const [test, setTest] = useState<IVehicle>();
-  const id = useRef<number>();
-  console.log(props);
+  const {id} = props.route.params as IControlScreenProps;
+
+  console.log('id', id);
 
   return (
     <SafeAreaView style={styles.safeArea}>

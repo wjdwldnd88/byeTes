@@ -25,9 +25,37 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
   const id = useRef<number>();
 
-  const NavigateControl = async () => [
-    navigation.navigate(RouteNames.ControlScreen),
-  ];
+  useEffect(() => {
+    readAuthInfo().then(async authData => {
+      try {
+        const accessToken = authData!.access_token;
+
+        setAccessToken(accessToken);
+
+        const state = await requestState(accessToken);
+
+        setVehicleData(state);
+        // wake_up 추가
+        if (state?.state == 'asleep') {
+          const wakeUp = await WakeUpVehicle(accessToken, state!.id);
+        }
+
+        const allStates = await requsetVehicleState(accessToken, state!.id);
+
+        setVehicleDataAll(allStates);
+      } catch (e) {
+        console.log('network error:', e);
+      }
+    });
+  }, []);
+
+  const navigateToControlScreen = () => {
+    if (!vehicleData?.id) {
+      return;
+    }
+
+    navigation.navigate(RouteNames.ControlScreen, {id: vehicleData.id});
+  };
 
   const handleControlButton = async () => {
     if (!vehicleData?.id) {
@@ -141,7 +169,9 @@ const HomeScreen = (props: IProps): JSX.Element => {
             Access code :<Text> {accessToken}</Text>
           </Text>
 
-          <TouchableOpacity style={styles.button1} onPress={NavigateControl}>
+          <TouchableOpacity
+            style={styles.button1}
+            onPress={navigateToControlScreen}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
