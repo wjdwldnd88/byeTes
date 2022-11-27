@@ -2,12 +2,12 @@ import {entryUrl} from '../Api/Common';
 
 export const WakeUpVehicle = async (
   accessToken: string,
-  Id: number,
+  id: number,
 ): Promise<null> => {
   console.log('***********WakeUpVehicle************');
   try {
     const BearerAccessToken = 'Bearer ' + accessToken;
-    const wakeUpUrl = entryUrl + '/api/1/vehicles/' + Id + '/wake_up';
+    const wakeUpUrl = entryUrl + '/api/1/vehicles/' + id + '/wake_up';
     console.log('wakeUpUrl : ', wakeUpUrl);
     // console.log('vehicle_data_URL : ', vehicle_data_URL);
 

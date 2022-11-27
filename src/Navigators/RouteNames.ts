@@ -1,3 +1,5 @@
+import { IControlScreenProps } from "../Screens/Menu/ControlScreen";
+
 export enum RouteNames {
   LoginScreen = 'LoginScreen',
   TeslaWebViewScreen = 'TeslaWebViewScreen',
@@ -9,5 +11,5 @@ export type RootStackParamList = {
   [RouteNames.LoginScreen]: undefined;
   [RouteNames.TeslaWebViewScreen]: undefined;
   [RouteNames.HomeScreen]: undefined;
-  [RouteNames.ControlScreen]: undefined;
+  [RouteNames.ControlScreen]: IControlScreenProps;
 };
