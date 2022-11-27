@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import 'react-native-url-polyfill/auto';
 import {transferTokenToPrivateServer} from '../../Api/PrivateServerApi';
+import {LockDoors, WakeUpVehicle} from '../../Api/Control';
 import {
   IVehicle,
   IVehicleAll,
@@ -16,6 +17,7 @@ import {styles} from './HomeScreen.style';
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
 const HomeScreen = (props: IProps): JSX.Element => {
+  const {navigation} = props;
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
   const [vehicleDataAll, setVehicleDataAll] = useState<IVehicleAll>();
@@ -23,9 +25,18 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
   const id = useRef<number>();
 
+  const NavigateControl = async () => [
+    navigation.navigate(RouteNames.ControlScreen),
+  ];
+
   const handleControlButton = async () => {
-    await requestState(accessToken);
-    console.log('pressControl  requestState  : ', vehicleData?.id);
+    if (!vehicleData?.id) {
+      console.log('vehicleData?.id : ', vehicleData?.id);
+      return;
+    }
+    await LockDoors(accessToken, vehicleData?.id);
+    console.log('accessToken : ', accessToken);
+    console.log('id : ', vehicleData?.id);
   };
 
   const pressButton = async () => {
@@ -60,6 +71,10 @@ const HomeScreen = (props: IProps): JSX.Element => {
         const state = await requestState(accessToken);
 
         setVehicleData(state);
+        // wake_up 추가
+        if (state?.state == 'asleep') {
+          const wakeUp = await WakeUpVehicle(accessToken, state!.id);
+        }
 
         const allStates = await requsetVehicleState(accessToken, state!.id);
 
@@ -111,7 +126,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
         <View>
           <Image
             source={require('../../../assets/image/myTesla.jpg')}
-            style={styles.image}
+            style={styles.carOutLook}
           />
         </View>
 
@@ -126,9 +141,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
             Access code :<Text> {accessToken}</Text>
           </Text>
 
-          <TouchableOpacity
-            style={styles.button1}
-            onPress={handleControlButton}>
+          <TouchableOpacity style={styles.button1} onPress={NavigateControl}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
@@ -140,7 +153,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
             <Text>제로백</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={pressButton}>
+          <TouchableOpacity style={styles.button} onPress={handleControlButton}>
             <Text>베터리통계</Text>
           </TouchableOpacity>
         </View>

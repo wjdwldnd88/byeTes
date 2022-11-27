@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
   serverStatusButton: {
     alignSelf: 'center',
     borderRadius: 6,
-    paddingHorizontal:5,
+    paddingHorizontal: 5,
   },
 
   backgroundGreen: {
@@ -81,5 +81,10 @@ export const styles = StyleSheet.create({
 
   backgroundRed: {
     backgroundColor: 'red',
+  },
+
+  carOutLook: {
+    width: '100%',
+    height: 220,
   },
 });
