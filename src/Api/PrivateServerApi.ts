@@ -21,4 +21,6 @@ export const transferTokenToPrivateServer = async (access_token: string, id: num
   } catch (e) {
     console.log("private server is off")
   }
+
+  return false;
 }
