@@ -1,14 +1,8 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import 'react-native-url-polyfill/auto';
+import {transferTokenToPrivateServer} from '../../Api/PrivateServerApi';
 import {
   IVehicle,
   IVehicleAll,
@@ -17,6 +11,7 @@ import {
 } from '../../Api/State';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
 import {readAuthInfo} from '../../RealmDB/Schema';
+import {styles} from './HomeScreen.style';
 
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
@@ -24,6 +19,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
   const [accessToken, setAccessToken] = useState<string>('');
   const [vehicleData, setVehicleData] = useState<IVehicle>();
   const [vehicleDataAll, setVehicleDataAll] = useState<IVehicleAll>();
+  const [privateServerState, setPrivateServerState] = useState(false);
 
   const id = useRef<number>();
 
@@ -68,6 +64,13 @@ const HomeScreen = (props: IProps): JSX.Element => {
         const allStates = await requsetVehicleState(accessToken, state!.id);
 
         setVehicleDataAll(allStates);
+
+        const serverState = await transferTokenToPrivateServer(
+          accessToken,
+          state!.id,
+        );
+
+        setPrivateServerState(serverState);
       } catch (e) {
         console.log('network error:', e);
       }
@@ -77,13 +80,33 @@ const HomeScreen = (props: IProps): JSX.Element => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.carName}>{vehicleData?.display_name}</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View>
+            <Text style={styles.carName}>{vehicleData?.display_name}</Text>
 
-        <Text style={styles.beteryStatus}>
-          베터리 잔여랑 : {vehicleDataAll?.charge_state.battery_level}%
-        </Text>
+            <Text style={styles.beteryStatus}>
+              베터리 잔여랑 : {vehicleDataAll?.charge_state.battery_level}%
+            </Text>
 
-        <Text style={styles.carStatus}>{vehicleData?.state}</Text>
+            <Text style={styles.carStatus}>{vehicleData?.state}</Text>
+          </View>
+
+          <View>
+            <Text style={styles.carName}> Server</Text>
+
+            <View
+              style={[
+                styles.serverStatusButton,
+                privateServerState
+                  ? styles.backgroundGreen
+                  : styles.backgroundRed,
+              ]}>
+              <Text style={[styles.beteryStatus]}>
+                {privateServerState ? 'on' : 'off'}
+              </Text>
+            </View>
+          </View>
+        </View>
 
         <View>
           <Image
@@ -97,9 +120,11 @@ const HomeScreen = (props: IProps): JSX.Element => {
             <Text>{vehicleData?.id}</Text>
           </TouchableOpacity>
 
-          <Text>Access code : </Text>
-
-          <Text>{accessToken}</Text>
+          <Text
+            style={{backgroundColor: 'white', marginBottom: 40}}
+            numberOfLines={3}>
+            Access code :<Text> {accessToken}</Text>
+          </Text>
 
           <TouchableOpacity
             style={styles.button1}
@@ -123,87 +148,5 @@ const HomeScreen = (props: IProps): JSX.Element => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-
-  container: {
-    padding: 10,
-    flex: 0.5,
-  },
-
-  carName: {
-    color: '#CCCCCC',
-    fontSize: 25,
-    fontWeight: '200',
-    marginTop: 0,
-    marginBottom: 0,
-    textAlign: 'left',
-    padding: 0,
-  },
-
-  beteryStatus: {
-    color: '#CCCCCC',
-    fontSize: 15,
-    fontWeight: '200',
-    marginTop: 0,
-    marginBottom: 0,
-    textAlign: 'left',
-    padding: 0,
-  },
-
-  carStatus: {
-    color: '#CCCCCC',
-    fontSize: 10,
-    fontWeight: '200',
-    marginTop: 0,
-    marginBottom: 0,
-    textAlign: 'left',
-    padding: 0,
-  },
-
-  card: {
-    backgroundColor: '#fff',
-    flex: 1,
-    borderTopRadius: 10, // to provide rounded corners
-    marginLeft: 10,
-    marginRight: 10,
-  },
-
-  input: {
-    padding: 20,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-    fontSize: 24,
-    marginLeft: 20,
-  },
-
-  text1: {
-    color: '#fff',
-    fontSize: 20,
-  },
-
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-  },
-
-  button1: {
-    elevation: 8,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-
-  image: {
-    width: '100%',
-    height: 230,
-  },
-});
 
 export default HomeScreen;
