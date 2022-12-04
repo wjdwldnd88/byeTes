@@ -1,5 +1,6 @@
-import {IControlScreenProps} from '../Screens/Menu/ControlScreen';
-import {IClimateScreenProps} from '../Screens/Menu/ClimateScreen';
+import { IClimateScreenProps } from '../Screens/Menu/ClimateScreen';
+import { IControlScreenProps } from '../Screens/Menu/ControlScreen';
+import { ICStatisticsScreenProps } from "../Screens/Menu/StatisticsScreen";
 
 export enum RouteNames {
   LoginScreen = 'LoginScreen',
@@ -7,6 +8,7 @@ export enum RouteNames {
   HomeScreen = 'HomeScreen',
   ControlScreen = 'ControlScreen',
   ClimateScreen = 'ClimateScreen',
+  StatisticsScreen = 'StatisticsScreen'
 }
 
 export type RootStackParamList = {
@@ -15,4 +17,5 @@ export type RootStackParamList = {
   [RouteNames.HomeScreen]: undefined;
   [RouteNames.ControlScreen]: IControlScreenProps;
   [RouteNames.ClimateScreen]: IClimateScreenProps;
+  [RouteNames.StatisticsScreen]: ICStatisticsScreenProps;
 };
