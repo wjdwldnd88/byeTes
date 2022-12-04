@@ -24,6 +24,7 @@ const HomeScreen = (props: IProps): JSX.Element => {
   const [privateServerState, setPrivateServerState] = useState(false);
 
   const id = useRef<number>();
+  const locked = useRef<boolean>();
 
   useEffect(() => {
     readAuthInfo().then(async authData => {
@@ -50,11 +51,15 @@ const HomeScreen = (props: IProps): JSX.Element => {
   }, []);
 
   const navigateToControlScreen = () => {
-    if (!vehicleData?.id) {
+    if (!vehicleData?.id || !accessToken) {
       return;
     }
 
-    navigation.navigate(RouteNames.ControlScreen, {id: vehicleData.id});
+    navigation.navigate(RouteNames.ControlScreen, {
+      id: vehicleData.id,
+      accessToken: accessToken,
+      lockStatus: vehicleDataAll?.vehicle_state.locked as boolean,
+    });
   };
 
   const handleControlButton = async () => {

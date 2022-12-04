@@ -1,4 +1,4 @@
-import { entryUrl } from './Common';
+import {entryUrl} from './Common';
 
 const stateUrl = entryUrl + '/api/1/vehicles';
 
@@ -22,7 +22,9 @@ export interface IVehicle {
 
 type IVehicles = Array<IVehicle>;
 
-export const requestState = async (body: string): Promise<IVehicle | undefined> => {
+export const requestState = async (
+  body: string,
+): Promise<IVehicle | undefined> => {
   try {
     const body_bearer = 'Bearer ' + body;
 
@@ -233,7 +235,7 @@ export interface vehicle_state {
   vehicle_name: string; //":name"
 }
 
-export interface media_state { }
+export interface media_state {}
 
 export const requsetVehicleState = async (
   accessToken: string,
@@ -260,11 +262,11 @@ export const requsetVehicleState = async (
     }
     const result = await httpResponse.json();
 
-    console.log('result : ', result);
+    //console.log('result : ', result);
 
     const vehicle_status_all: IVehicleAll = result.response;
 
-    console.log('vehicle_status_all : ', vehicle_status_all);
+    //console.log('vehicle_status_all : ', vehicle_status_all);
 
     return vehicle_status_all;
   } catch (e) {

@@ -1,10 +1,29 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+} from 'react-native';
 import 'react-native-url-polyfill/auto';
+import {
+  LockDoors,
+  unLockDoors,
+  unLockFrunk,
+  unLockTrunk,
+} from '../../Api/Control';
+import {IVehicleAll, requsetVehicleState} from '../../Api/State';
 import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
+import {backgroundImage} from '../../Utils/Image';
 export interface IControlScreenProps {
   id: number;
+  accessToken: string;
+  lockStatus: boolean;
 }
 
 type IProps = NativeStackScreenProps<
@@ -13,20 +32,84 @@ type IProps = NativeStackScreenProps<
 >;
 
 const ControlScreen = (props: IProps): JSX.Element => {
+  const {navigation} = props;
   const {id} = props.route.params as IControlScreenProps;
+  const {accessToken} = props.route.params as IControlScreenProps;
+  const {lockStatus} = props.route.params as IControlScreenProps;
+  const [imageBack, setimageBack] = useState<any>();
+  const [vehicleDataAll, setVehicleDataAll] = useState<IVehicleAll>();
+  let lockUnlockSwitch = '';
 
-  console.log('id', id);
+  const switchBackInit = () => {
+    if (lockStatus) {
+      setimageBack(backgroundImage.controlOUT);
+    } else {
+      setimageBack(backgroundImage.controlOutUnlock);
+    }
+  };
+
+  const lockStatusString = lockStatus.toString();
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+  const alert = () => {
+    Alert.alert('asdfafadf', lockStatusString);
+  };
+
+  const onPressLockUnlockDoors = async () => {
+    const allStates = await requsetVehicleState(accessToken, id);
+    setVehicleDataAll(allStates);
+    if (allStates?.vehicle_state.locked) {
+      console.log('unLockDoors');
+      const unLockResult = await unLockDoors(accessToken, id);
+      if (unLockResult?.result) {
+        setimageBack(backgroundImage.controlOutUnlock);
+      }
+    } else {
+      console.log('LockDoors');
+      const LockResult = await LockDoors(accessToken, id);
+      if (LockResult?.result) {
+        setimageBack(backgroundImage.controlOUT);
+      }
+    }
+  };
+
+  const onPressUnLockFrunk = async () => {
+    const unLockFrunkResult = await unLockFrunk(accessToken, id);
+    if (unLockFrunkResult?.result) {
+      setimageBack(backgroundImage.controlOutFrunkUnlock);
+    }
+  };
+
+  const onPressUnLockTrunk = async () => {
+    const unLockTrunkResult = await unLockTrunk(accessToken, id);
+    if (unLockTrunkResult?.result) {
+      setimageBack(backgroundImage.controlOutTrunkUnlock);
+    }
+  };
+
+  useEffect(() => {
+    switchBackInit();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.carName}>123</Text>
-        <View>
-          <Image
-            source={require('../../../assets/image/controlOUT.jpg')}
-            style={styles.carInLook}
-          />
-        </View>
+        <TouchableOpacity onPress={goBack}>
+          <Text style={styles.goBack}>🔙</Text>
+        </TouchableOpacity>
+        <ImageBackground source={imageBack} style={styles.carOutLook}>
+          <TouchableOpacity onPress={onPressUnLockFrunk}>
+            <Text style={styles.frunkOpen}>123</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onPressLockUnlockDoors}>
+            <Text style={styles.carLock}>123</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onPressUnLockTrunk}>
+            <Text style={styles.TrunkOpen}>123</Text>
+          </TouchableOpacity>
+        </ImageBackground>
       </View>
     </SafeAreaView>
   );
@@ -43,8 +126,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  carName: {
-    color: '#CCCCCC',
+  frunkOpen: {
+    color: '#00000000',
+    fontSize: 30,
+    fontWeight: '200',
+    marginTop: 43,
+    marginBottom: 0,
+    textAlign: 'left',
+    padding: 0,
+  },
+
+  TrunkOpen: {
+    color: '#00000000',
+    fontSize: 30,
+    fontWeight: '200',
+    marginTop: 153,
+    marginBottom: 0,
+    textAlign: 'left',
+    padding: 0,
+  },
+
+  goBack: {
+    color: 'black',
     fontSize: 25,
     fontWeight: '200',
     marginTop: 0,
@@ -53,21 +156,11 @@ const styles = StyleSheet.create({
     padding: 0,
   },
 
-  beteryStatus: {
-    color: '#CCCCCC',
-    fontSize: 15,
+  carLock: {
+    color: '#00000000',
+    fontSize: 30,
     fontWeight: '200',
-    marginTop: 0,
-    marginBottom: 0,
-    textAlign: 'left',
-    padding: 0,
-  },
-
-  carStatus: {
-    color: '#CCCCCC',
-    fontSize: 10,
-    fontWeight: '200',
-    marginTop: 0,
+    marginTop: 310,
     marginBottom: 0,
     textAlign: 'left',
     padding: 0,
@@ -108,9 +201,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 
-  carInLook: {
+  carOutLook: {
     width: '100%',
     height: '100%',
+    alignItems: 'center',
   },
 });
 
