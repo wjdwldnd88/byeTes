@@ -36,15 +36,21 @@ const ControlScreen = (props: IProps): JSX.Element => {
   const {id} = props.route.params as IControlScreenProps;
   const {accessToken} = props.route.params as IControlScreenProps;
   const {lockStatus} = props.route.params as IControlScreenProps;
-  const [imageBack, setimageBack] = useState<any>();
+  const [imageFrontBack, setimageFrontBack] = useState<any>();
+  const [imageBodyBack, setimageBodyBack] = useState<any>();
+  const [imageRearBack, setimageRearBack] = useState<any>();
   const [vehicleDataAll, setVehicleDataAll] = useState<IVehicleAll>();
   let lockUnlockSwitch = '';
 
   const switchBackInit = () => {
     if (lockStatus) {
-      setimageBack(backgroundImage.controlOUT);
+      setimageFrontBack(backgroundImage.controlOutFrunkLock);
+      setimageBodyBack(backgroundImage.controlOutBodyLock);
+      setimageRearBack(backgroundImage.controlOutTrunkLock);
     } else {
-      setimageBack(backgroundImage.controlOutUnlock);
+      setimageFrontBack(backgroundImage.controlOutFrunkLock);
+      setimageBodyBack(backgroundImage.controlOutBodyUnlock);
+      setimageRearBack(backgroundImage.controlOutTrunkLock);
     }
   };
 
@@ -64,30 +70,61 @@ const ControlScreen = (props: IProps): JSX.Element => {
       console.log('unLockDoors');
       const unLockResult = await unLockDoors(accessToken, id);
       if (unLockResult?.result) {
-        setimageBack(backgroundImage.controlOutUnlock);
+        setimageBodyBack(backgroundImage.controlOutBodyUnlock);
       }
     } else {
       console.log('LockDoors');
       const LockResult = await LockDoors(accessToken, id);
       if (LockResult?.result) {
-        setimageBack(backgroundImage.controlOUT);
+        setimageBodyBack(backgroundImage.controlOutBodyLock);
       }
     }
   };
 
-  const onPressUnLockFrunk = async () => {
-    const unLockFrunkResult = await unLockFrunk(accessToken, id);
-    if (unLockFrunkResult?.result) {
-      setimageBack(backgroundImage.controlOutFrunkUnlock);
-    }
-  };
+  const onPressUnLockFrunk = () =>
+    Alert.alert('계속 하시겠습니까?', '수동으로 닫으셔야 합니다.', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          const allStates = await requsetVehicleState(accessToken, id);
+          if (allStates?.vehicle_state.ft == 0) {
+            const unLockFrunkResult = await unLockFrunk(accessToken, id);
+            if (unLockFrunkResult?.status == 'success') {
+              setimageFrontBack(backgroundImage.controlOutFrunkUnlock);
+            }
+          }
+        },
+      },
+    ]);
 
-  const onPressUnLockTrunk = async () => {
-    const unLockTrunkResult = await unLockTrunk(accessToken, id);
-    if (unLockTrunkResult?.result) {
-      setimageBack(backgroundImage.controlOutTrunkUnlock);
-    }
-  };
+  const onPressUnLockTrunk = () =>
+    Alert.alert('계속 하시겠습니까?', '수동으로 닫으셔야 합니다.', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          const allStates = await requsetVehicleState(accessToken, id);
+          if (allStates?.vehicle_state.rt == 0) {
+            const unLockTrunkResult = await unLockTrunk(accessToken, id);
+            if (unLockTrunkResult?.status == 'success') {
+              setimageRearBack(backgroundImage.controlOutTrunkUnlock);
+            } else {
+              const unLockTrunkResult = await unLockTrunk(accessToken, id);
+              if (unLockTrunkResult?.status == 'success') {
+                setimageRearBack(backgroundImage.controlOutTrunkLock);
+              }
+            }
+          }
+        },
+      },
+    ]);
 
   useEffect(() => {
     switchBackInit();
@@ -96,16 +133,25 @@ const ControlScreen = (props: IProps): JSX.Element => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <TouchableOpacity onPress={goBack}>
+        <TouchableOpacity onPress={goBack} style={{flexDirection: 'row'}}>
           <Text style={styles.goBack}>🔙</Text>
+
+          <Text style={styles.menuHeader}> 컨트롤 </Text>
+
+          <Text style={{flex: 1}} />
         </TouchableOpacity>
-        <ImageBackground source={imageBack} style={styles.carOutLook}>
+
+        <ImageBackground source={imageFrontBack} style={styles.carOutLook}>
           <TouchableOpacity onPress={onPressUnLockFrunk}>
             <Text style={styles.frunkOpen}>123</Text>
           </TouchableOpacity>
+        </ImageBackground>
+        <ImageBackground source={imageBodyBack} style={styles.carOutLook}>
           <TouchableOpacity onPress={onPressLockUnlockDoors}>
             <Text style={styles.carLock}>123</Text>
           </TouchableOpacity>
+        </ImageBackground>
+        <ImageBackground source={imageRearBack} style={styles.carOutLook}>
           <TouchableOpacity onPress={onPressUnLockTrunk}>
             <Text style={styles.TrunkOpen}>123</Text>
           </TouchableOpacity>
@@ -154,6 +200,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     textAlign: 'left',
     padding: 0,
+    flex: 1,
   },
 
   carLock: {
@@ -166,44 +213,17 @@ const styles = StyleSheet.create({
     padding: 0,
   },
 
-  card: {
-    backgroundColor: '#fff',
-    flex: 1,
-    borderTopRadius: 10, // to provide rounded corners
-    marginLeft: 10,
-    marginRight: 10,
-  },
-
-  input: {
-    padding: 20,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-    fontSize: 24,
-    marginLeft: 20,
-  },
-
-  text1: {
+  menuHeader: {
     color: '#fff',
-    fontSize: 20,
+    textAlign: 'center',
+    padding: 0,
+    alignSelf: 'center',
+    flex: 1,
   },
-
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-  },
-
-  button1: {
-    elevation: 8,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-
   carOutLook: {
     width: '100%',
-    height: '100%',
+    flex: 1,
+    //height: '33%',
     alignItems: 'center',
   },
 });

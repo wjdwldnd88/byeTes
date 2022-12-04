@@ -112,24 +112,27 @@ export const LockDoors = async (
   }
 };
 
+export interface ITrunkResponse {
+  car: string;
+  cause: string;
+  status: string;
+  token: string;
+}
+
 export const unLockFrunk = async (
   accessToken: string,
   Id: number,
-): Promise<Iresponse | undefined> => {
+): Promise<ITrunkResponse | undefined> => {
   console.log('***********unLockFrunk************');
   try {
     const BearerAccessToken = 'Bearer ' + accessToken;
     const unLockFrunkUrl =
-      entryUrl + '/api/1/vehicles/' + Id + '/command/actuate_trunk';
-    // console.log('body_bearer : ', BearerAccessToken);
-    // console.log('vehicle_data_URL : ', vehicle_data_URL);
+      'https://tesla-info.com/api/control_v2.php?token=' +
+      accessToken +
+      '&request=actuate_trunk&value=front';
 
     const httpResponse = await fetch(unLockFrunkUrl, {
       method: 'POST',
-      headers: {
-        Authorization: BearerAccessToken,
-        which_trunk: 'front',
-      },
     });
 
     if (!httpResponse.ok) {
@@ -139,9 +142,9 @@ export const unLockFrunk = async (
     }
     const result = await httpResponse.json();
     // console.log('result : ', result);
-    const resultResponse = result.response;
-    // console.log('result_ : ', result_);
-    return resultResponse;
+    const unLockFrunkPram: ITrunkResponse = result;
+
+    return unLockFrunkPram;
   } catch (e) {
     console.log('unLockFrunk error');
     console.log('e : ', e);
@@ -152,7 +155,7 @@ export const unLockFrunk = async (
 export const unLockTrunk = async (
   accessToken: string,
   Id: number,
-): Promise<Iresponse | undefined> => {
+): Promise<ITrunkResponse | undefined> => {
   console.log('***********unLockTrunk************');
   try {
     const BearerAccessToken = 'Bearer ' + accessToken;
@@ -179,9 +182,8 @@ export const unLockTrunk = async (
     }
     const result = await httpResponse.json();
     console.log('result : ', result);
-    const resultResponse = result.response;
-    console.log('result_ : ', resultResponse);
-    return resultResponse;
+    const unLockTrunkPram: ITrunkResponse = result;
+    return unLockTrunkPram;
   } catch (e) {
     console.log('unLockTrunk error');
     console.log('e : ', e);
