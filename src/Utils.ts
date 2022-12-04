@@ -14,3 +14,4 @@ export const makeRandomString = (length: number): string => {
 export const encryptSHA256 = (data: string): string => {
   return SHA256(data).toString();
 };
+
