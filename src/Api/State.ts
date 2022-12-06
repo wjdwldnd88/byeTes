@@ -208,6 +208,7 @@ export interface vehicle_state {
   calendar_supported: boolean;
   car_version: string; //"2019.12.1.1 4b1dd29",
   center_display_state: number;
+  dashcam_clip_save_available: boolean;
   df: number;
   dr: number;
   ft: number;
@@ -262,12 +263,13 @@ export const requsetVehicleState = async (
     }
     const result = await httpResponse.json();
 
-    //console.log('result : ', result);
+    //  console.log('result : ', result);
 
     const vehicle_status_all: IVehicleAll = result.response;
 
-    //console.log('vehicle_status_all : ', vehicle_status_all);
-
+    // console.log('vehicle_status_all : ', vehicle_status_all);
+    //console.log('#######ft####### : ', vehicle_status_all.vehicle_state.ft);
+    //console.log('#######rt####### : ', vehicle_status_all.vehicle_state.rt);
     return vehicle_status_all;
   } catch (e) {
     console.log('requsetVehicleState error');

@@ -1,8 +1,9 @@
 export const backgroundImage = {
-  controlOUT: require('../../assets/image/controlOUT.jpg'),
   controlIN: require('../../assets/image/controlIN.jpg'),
-  controlOutBothUnlock: require('../../assets/image/controlOutBothUnlock.jpg'),
+  controlOutBodyLock: require('../../assets/image/controlOutBodyLock.jpg'),
+  controlOutBodyUnlock: require('../../assets/image/controlOutBodyUnlock.jpg'),
+  controlOutFrunkLock: require('../../assets/image/controlOutFrunkLock.jpg'),
   controlOutFrunkUnlock: require('../../assets/image/controlOutFrunkUnlock.jpg'),
+  controlOutTrunkLock: require('../../assets/image/controlOutTrunkLock.jpg'),
   controlOutTrunkUnlock: require('../../assets/image/controlOutTrunkUnlock.jpg'),
-  controlOutUnlock: require('../../assets/image/controlOutUnlock.jpg'),
 };
