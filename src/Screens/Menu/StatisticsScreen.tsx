@@ -22,7 +22,7 @@ type IProps = NativeStackScreenProps<
 
 interface ISpendingData {
   date: string;
-  battery_level: number;
+  battery_level_increment: number;
   battery_range: number;
   odometer: number;
 }
@@ -40,7 +40,7 @@ const StatisticsScreen = (props: IProps): JSX.Element => {
       setDay0Data(data);
     });
 
-    spendingData(getLocalDayTimeRange(-1)).then(data => {
+    spendingData(getLocalDayTimeRange(1)).then(data => {
       setDay1Data(data);
     });
 
@@ -82,7 +82,7 @@ const StatisticsScreen = (props: IProps): JSX.Element => {
 
     const result: ISpendingData = {
       date: dayjs(firstData.date).format('YYYY-MM-DD'),
-      battery_level:
+      battery_level_increment:
         firstData.battery_level -
         (lastData?.battery_level ?? firstData.battery_level),
       battery_range:
@@ -103,24 +103,43 @@ const StatisticsScreen = (props: IProps): JSX.Element => {
       return null;
     }
 
-    const {date, battery_level, battery_range} = data;
+    const {date, battery_level_increment, battery_range} = data;
 
     const odometer = mileToKillometer(data.odometer);
 
     const efficiency = (odometer / mileToKillometer(battery_range)) * 100;
 
     return (
-      <View
-        style={{
-          height: '30%',
-          backgroundColor: 'white',
-          borderRadius: 10,
-          margin: 10,
-        }}>
-        <Text>날짜 : {date}</Text>
-        <Text>배터리 소모량 : {battery_level}%</Text>
-        <Text>주행 거리 : {odometer}km</Text>
-        <Text>배터리 효율 : {efficiency.toFixed(2)}%</Text>
+      <View style={styles.container}>
+        <View style={styles.dataRaw}>
+          <Text style={styles.dataText}>날짜</Text>
+
+          <Text style={styles.dataText}>{date}</Text>
+        </View>
+
+        <View style={styles.dataRaw}>
+          <Text style={styles.dataText}>
+            {battery_level_increment < 0 ? '배터리 충전량' : '배터리 소모량'}
+          </Text>
+
+          <Text style={styles.dataText}>
+            {Math.abs(battery_level_increment)}%
+          </Text>
+        </View>
+
+        <View style={styles.dataRaw}>
+          <Text style={styles.dataText}>주행 거리</Text>
+
+          <Text style={styles.dataText}>{odometer} km</Text>
+        </View>
+
+        {battery_level_increment >= 0 && (
+          <View style={styles.dataRaw}>
+            <Text style={styles.dataText}>배터리 효율</Text>
+
+            <Text style={styles.dataText}>{efficiency.toFixed(2)}%</Text>
+          </View>
+        )}
       </View>
     );
   };
@@ -143,6 +162,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
   },
+
+  container: {
+    height: '30%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    margin: 10,
+    padding: 20,
+  },
+
   goBack: {
     color: 'black',
     fontSize: 25,
@@ -151,6 +179,17 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     textAlign: 'left',
     padding: 0,
+  },
+
+  dataRaw: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems:'center',
+    flex: 1,
+  },
+
+  dataText: {
+    fontSize: 25,
   },
 });
 
