@@ -190,39 +190,3 @@ export const unLockTrunk = async (
     throw e;
   }
 };
-
-export const HonkHorn = async (
-  accessToken: string,
-  Id: number,
-): Promise<null> => {
-  console.log('***********HonkHorn************');
-  try {
-    const BearerAccessToken = 'Bearer ' + accessToken;
-    const HonkHornUrl =
-      entryUrl + '/api/1/vehicles/' + Id + '/command/honk_horn';
-    console.log('body_bearer : ', BearerAccessToken);
-    // console.log('vehicle_data_URL : ', vehicle_data_URL);
-
-    const httpResponse = await fetch(HonkHornUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: BearerAccessToken,
-      },
-    });
-
-    if (!httpResponse.ok) {
-      console.log('httpResponse not ok');
-      console.log('httpResponse : ', httpResponse);
-      return null;
-    }
-    const result = await httpResponse.json();
-    console.log('result : ', result);
-    const result_ = result.response;
-    console.log('result_ : ', result_);
-    return null;
-  } catch (e) {
-    console.log('HonkHorn error');
-    console.log('e : ', e);
-    throw e;
-  }
-};
