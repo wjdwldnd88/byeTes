@@ -1,4 +1,20 @@
 import { privateServerUrl } from "./Common";
+interface IStatisticsData {
+  _id: number;
+  id: number;
+  date: string;
+  battery_level: number
+  battery_range: number;
+  odometer: number;
+  heading: number;
+  latitude: number;
+  longitude: number;
+}
+
+export interface ITimeRange {
+  from: string;
+  to: string;
+}
 
 export const transferTokenToPrivateServer = async (access_token: string, id: number): Promise<boolean> => {
   try {
@@ -23,4 +39,26 @@ export const transferTokenToPrivateServer = async (access_token: string, id: num
   }
 
   return false;
+}
+
+export const getStatisticsData = async (id: number, timeRange:ITimeRange): Promise<IStatisticsData[] | void> => {
+  const {from, to} = timeRange
+  
+  try {
+    const vehicleDataUrl = `${privateServerUrl}/vehicle_data/${id}?from=${from}&to=${to}`
+
+    const httpResponse = await fetch(vehicleDataUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log("httpResponse:", httpResponse)
+
+    return await httpResponse.json();
+
+  } catch (e) {
+    console.log('get data from private server error')
+  }
 }

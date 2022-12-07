@@ -1,18 +1,18 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useRef, useState} from 'react';
-import {Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import 'react-native-url-polyfill/auto';
-import {transferTokenToPrivateServer} from '../../Api/PrivateServerApi';
-import {LockDoors, WakeUpVehicle} from '../../Api/Control';
+import { LockDoors, WakeUpVehicle } from '../../Api/Control';
+import { transferTokenToPrivateServer } from '../../Api/PrivateServerApi';
 import {
   IVehicle,
   IVehicleAll,
   requestState,
-  requsetVehicleState,
+  requsetVehicleState
 } from '../../Api/State';
-import {RootStackParamList, RouteNames} from '../../Navigators/RouteNames';
-import {readAuthInfo} from '../../RealmDB/Schema';
-import {styles} from './HomeScreen.style';
+import { RootStackParamList, RouteNames } from '../../Navigators/RouteNames';
+import { readAuthInfo } from '../../RealmDB/Schema';
+import { styles } from './HomeScreen.style';
 
 type IProps = NativeStackScreenProps<RootStackParamList, RouteNames.HomeScreen>;
 
@@ -70,6 +70,13 @@ const HomeScreen = (props: IProps): JSX.Element => {
       id: vehicleData.id,
       accessToken: accessToken,
     });
+    
+  const navigateToStatisticsScreen = () => {
+    if (!vehicleData?.id) {
+      return;
+    }
+
+    navigation.navigate(RouteNames.StatisticsScreen, {id: vehicleData.id});
   };
 
   const handleControlButton = async () => {
@@ -184,6 +191,12 @@ const HomeScreen = (props: IProps): JSX.Element => {
             style={styles.button}
             onPress={navigateToClimateScreen}>
             <Text>내부온도</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={navigateToStatisticsScreen}>
+            <Text>통계</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.button} onPress={pressButton}>
