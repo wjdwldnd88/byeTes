@@ -62,6 +62,16 @@ const HomeScreen = (props: IProps): JSX.Element => {
     });
   };
 
+  const navigateToClimateScreen = () => {
+    if (!vehicleData?.id || !accessToken) {
+      return;
+    }
+    navigation.navigate(RouteNames.ClimateScreen, {
+      id: vehicleData.id,
+      accessToken: accessToken,
+    });
+  };
+
   const handleControlButton = async () => {
     if (!vehicleData?.id) {
       console.log('vehicleData?.id : ', vehicleData?.id);
@@ -163,24 +173,16 @@ const HomeScreen = (props: IProps): JSX.Element => {
           />
         </View>
 
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.button} onPress={pressButton}>
-            <Text>{vehicleData?.id}</Text>
-          </TouchableOpacity>
-
-          <Text
-            style={{backgroundColor: 'white', marginBottom: 40}}
-            numberOfLines={3}>
-            Access code :<Text> {accessToken}</Text>
-          </Text>
-
+        <View style={styles.menuList}>
           <TouchableOpacity
-            style={styles.button1}
+            style={styles.button}
             onPress={navigateToControlScreen}>
             <Text>컨트롤</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={pressButton}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={navigateToClimateScreen}>
             <Text>내부온도</Text>
           </TouchableOpacity>
 

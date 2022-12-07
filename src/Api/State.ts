@@ -143,8 +143,7 @@ export interface climate_state {
   seat_heater_rear_left: number;
   seat_heater_rear_right: number;
   seat_heater_right: number;
-  seat_heater_third_row_left: number;
-  seat_heater_third_row_right: number;
+  seat_heater_rear_center: number;
   side_mirror_heaters: boolean;
   smart_preconditioning: boolean;
   steering_wheel_heater: boolean;

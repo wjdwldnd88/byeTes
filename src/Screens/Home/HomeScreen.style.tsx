@@ -15,58 +15,42 @@ export const styles = StyleSheet.create({
     color: '#CCCCCC',
     fontSize: 25,
     fontWeight: '200',
+    marginVertical: 3,
   },
 
   beteryStatus: {
     color: '#CCCCCC',
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: '200',
+    marginVertical: 1,
   },
 
   carStatus: {
     color: '#CCCCCC',
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: '200',
+    marginVertical: 1,
   },
 
-  card: {
+  menuList: {
     backgroundColor: 'black',
     // flex: 1,
     borderTopRadius: 10, // to provide rounded corners
     marginHorizontal: 10,
     overflow: 'hidden',
-  },
-
-  input: {
-    padding: 20,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-    fontSize: 24,
-    marginLeft: 20,
-  },
-
-  text1: {
-    color: '#fff',
-    fontSize: 20,
+    marginVertical: 10,
   },
 
   button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-  },
-
-  button1: {
     elevation: 8,
     backgroundColor: '#DDDDDD',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
-  },
-
-  image: {
-    width: '100%',
-    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    marginVertical: 5,
   },
 
   serverStatusButton: {
@@ -84,6 +68,7 @@ export const styles = StyleSheet.create({
   },
 
   carOutLook: {
+    marginVertical: 20,
     width: '100%',
     height: 220,
   },

@@ -7,6 +7,7 @@ import ControlScreen from './src/Screens/Menu/ControlScreen';
 
 import LoginScreen from './src/Screens/Login/LoginScreen';
 import TeslaWebViewScreen from './src/Screens/Login/TeslaWebviewScreen';
+import ClimateScreen from './src/Screens/Menu/ClimateScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -36,6 +37,12 @@ const App = () => {
         <RootStack.Screen
           name={RouteNames.ControlScreen}
           component={ControlScreen}
+          options={{gestureEnabled: false}}
+        />
+
+        <RootStack.Screen
+          name={RouteNames.ClimateScreen}
+          component={ClimateScreen}
           options={{gestureEnabled: false}}
         />
       </RootStack.Navigator>
