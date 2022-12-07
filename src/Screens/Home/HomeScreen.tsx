@@ -70,7 +70,8 @@ const HomeScreen = (props: IProps): JSX.Element => {
       id: vehicleData.id,
       accessToken: accessToken,
     });
-    
+  };
+
   const navigateToStatisticsScreen = () => {
     if (!vehicleData?.id) {
       return;
