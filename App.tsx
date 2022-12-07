@@ -9,6 +9,7 @@ import LoginScreen from './src/Screens/Login/LoginScreen';
 import TeslaWebViewScreen from './src/Screens/Login/TeslaWebviewScreen';
 import ClimateScreen from './src/Screens/Menu/ClimateScreen';
 import StatisticsScreen from './src/Screens/Menu/StatisticsScreen';
+import ZeroHundredScreen from './src/Screens/Menu/\bZeroHundredScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -50,6 +51,12 @@ const App = () => {
         <RootStack.Screen
           name={RouteNames.StatisticsScreen}
           component={StatisticsScreen}
+          options={{gestureEnabled: false}}
+        />
+
+        <RootStack.Screen
+          name={RouteNames.ZeroHundredScreen}
+          component={ZeroHundredScreen}
           options={{gestureEnabled: false}}
         />
       </RootStack.Navigator>

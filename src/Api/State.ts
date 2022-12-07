@@ -1,4 +1,4 @@
-import {entryUrl} from './Common';
+import { entryUrl } from './Common';
 
 const stateUrl = entryUrl + '/api/1/vehicles';
 
@@ -21,36 +21,6 @@ export interface IVehicle {
 }
 
 type IVehicles = Array<IVehicle>;
-
-export const requestState = async (
-  body: string,
-): Promise<IVehicle | undefined> => {
-  try {
-    const body_bearer = 'Bearer ' + body;
-
-    const httpResponse = await fetch(stateUrl, {
-      method: 'GET',
-      headers: {
-        Authorization: body_bearer,
-      },
-    });
-
-    if (!httpResponse.ok) {
-      console.log('httpResponse not ok');
-      return;
-    }
-    const result = await httpResponse.json();
-
-    const vehicle_status: IVehicles = result.response;
-
-    return vehicle_status[0];
-  } catch (e) {
-    console.log('requestState error');
-    console.log('e : ', e);
-    throw e;
-  }
-};
-
 export interface IVehicleAll {
   id: number;
   user_id: number;
@@ -272,6 +242,65 @@ export const requsetVehicleState = async (
     return vehicle_status_all;
   } catch (e) {
     console.log('requsetVehicleState error');
+    console.log('e : ', e);
+    throw e;
+  }
+};
+
+export const requestState = async (
+  body: string,
+): Promise<IVehicle | undefined> => {
+  try {
+    const body_bearer = 'Bearer ' + body;
+
+    const httpResponse = await fetch(stateUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: body_bearer,
+      },
+    });
+
+    if (!httpResponse.ok) {
+      console.log('httpResponse not ok');
+      return;
+    }
+    const result = await httpResponse.json();
+
+    const vehicle_status: IVehicles = result.response;
+
+    return vehicle_status[0];
+  } catch (e) {
+    console.log('requestState error');
+    console.log('e : ', e);
+    throw e;
+  }
+};
+
+export const requestDriveState = async (
+  accessToken: string,
+  id: number,
+): Promise<drive_state | undefined> => {
+  try {
+    const body_bearer = 'Bearer ' + accessToken;
+
+    const httpResponse = await fetch(`${entryUrl}/api/1/vehicles/${id}/data_request/drive_state`, {
+      method: 'GET',
+      headers: {
+        Authorization: body_bearer,
+      },
+    });
+
+    if (!httpResponse.ok) {
+      console.log('httpResponse not ok', httpResponse);
+      return;
+    }
+    const result = await httpResponse.json();
+
+    const driveState: drive_state = result.response;
+
+    return driveState;
+  } catch (e) {
+    console.log('requestState error');
     console.log('e : ', e);
     throw e;
   }

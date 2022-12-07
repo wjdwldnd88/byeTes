@@ -1,3 +1,4 @@
+import { IZeroHundredScreenProps } from '../Screens/Menu/\bZeroHundredScreen';
 import { IClimateScreenProps } from '../Screens/Menu/ClimateScreen';
 import { IControlScreenProps } from '../Screens/Menu/ControlScreen';
 import { ICStatisticsScreenProps } from "../Screens/Menu/StatisticsScreen";
@@ -8,7 +9,8 @@ export enum RouteNames {
   HomeScreen = 'HomeScreen',
   ControlScreen = 'ControlScreen',
   ClimateScreen = 'ClimateScreen',
-  StatisticsScreen = 'StatisticsScreen'
+  StatisticsScreen = 'StatisticsScreen',
+  ZeroHundredScreen = 'ZeroHundredScreen'
 }
 
 export type RootStackParamList = {
@@ -18,4 +20,5 @@ export type RootStackParamList = {
   [RouteNames.ControlScreen]: IControlScreenProps;
   [RouteNames.ClimateScreen]: IClimateScreenProps;
   [RouteNames.StatisticsScreen]: ICStatisticsScreenProps;
+  [RouteNames.ZeroHundredScreen]: IZeroHundredScreenProps;
 };
