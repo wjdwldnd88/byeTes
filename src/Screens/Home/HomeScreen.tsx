@@ -80,6 +80,17 @@ const HomeScreen = (props: IProps): JSX.Element => {
     navigation.navigate(RouteNames.StatisticsScreen, {id: vehicleData.id});
   };
 
+  const navigateToZeroHundredScreen = () => {
+    if (!vehicleData?.id) {
+      return;
+    }
+
+    navigation.navigate(RouteNames.ZeroHundredScreen, {
+      id: vehicleData.id,
+      accessToken: accessToken,
+    });
+  };
+
   const handleControlButton = async () => {
     if (!vehicleData?.id) {
       console.log('vehicleData?.id : ', vehicleData?.id);
@@ -196,15 +207,13 @@ const HomeScreen = (props: IProps): JSX.Element => {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={navigateToStatisticsScreen}>
-            <Text>통계</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.button} onPress={pressButton}>
+            onPress={navigateToZeroHundredScreen}>
             <Text>제로백</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={handleControlButton}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={navigateToStatisticsScreen}>
             <Text>베터리통계</Text>
           </TouchableOpacity>
         </View>
